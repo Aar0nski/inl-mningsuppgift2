@@ -1,3 +1,8 @@
+﻿using PersonalBudgetTracker.Models;
+using System.Transactions;
+
+
+namespace personalbudgettracker
 ﻿using personalBudgetTracker.Models;
 
 namespace personalbudgettracker.Services
@@ -5,10 +10,10 @@ namespace personalbudgettracker.Services
     public class BudgetManager
     {
         // Lista för att lagra transaktioner. List<Transaction> är en generisk lista som kan hålla objekt av typen Transaction. new() är en kort syntax för att skapa en ny instans av List<Transaction>.
-        private readonly List<Transaction> transactions = new();
+        private readonly List<BudgetTransaction> transactions = new();
 
         // Metod för att lägga till en ny transaktion i listan.
-        public void AddTransaction(Transaction t)
+        public void AddTransaction(BudgetTransaction t)
         {
             transactions.Add(t);
         }
@@ -31,16 +36,77 @@ namespace personalbudgettracker.Services
         // Metod för att beräkna och returnera den totala balansen genom att summera alla transaktioners belopp.
         public decimal CalculateBalance()
         {
-            return transactions.Sum(t => t.Amount); // retunerar summan av alla transaktioners belopp genom att använda LINQ-metoden Sum som tar en lambda-uttryck t => t.Amount för att specificera att vi vill summera Amount-egenskapen för varje transaktion t i listan.
-        }
+            return transactions.Sum(t => t.Amount); 
+        } 
+
         // Metod för att ta bort en transaktion baserat på dess index i listan. Returnerar true om borttagningen lyckades, annars false.
-        public bool DeleteTransaction(int index) // bool indikerar om borttagningen lyckades eller inte med hjälp av ett sant/falskt värde.
+        public bool DeleteTransaction(int index) 
         {
-            if (index < 0 || index >= transactions.Count) // Kontrollera om indexet är utanför listans gränser genom att jämföra det med 0 och listans längd.
+            if (index < 0 || index >= transactions.Count)
                 return false;
 
-            transactions.RemoveAt(index); // Tar bort transaktionen vid det angivna indexet från listan med hjälp av RemoveAt-metoden.
+            transactions.RemoveAt(index); 
             return true;
+        }
+        public void ShowByCategory(string category)
+        {
+            // Filtrerar ut transaktioner som matchar kategorin (ignorerar stora/små bokstäver)
+            var filtered = transactions
+                .Where(t => t.Category.Equals(category, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (filtered.Count == 0)
+            {
+                Console.WriteLine($"Inga transaktioner hittades för kategorin \"{category}\".");
+                return;
+            }
+
+            Console.WriteLine($"\nTransaktioner i kategorin \"{category}\":");
+            Console.WriteLine("----------------------------------------");
+
+            foreach (var t in filtered)
+            {
+                t.ShowInfo(); // Använder redan färger för belopp
+            }
+
+            Console.WriteLine("----------------------------------------");
+        }
+        public void ShowStats()
+        {
+            if (transactions.Count == 0)
+            {
+                Console.WriteLine("Inga transaktioner ännu.");
+                return;
+            }
+
+            decimal totalIncome = transactions
+                .Where(t => t.Amount > 0)
+                .Sum(t => t.Amount);
+
+            decimal totalExpense = transactions
+                .Where(t => t.Amount < 0)
+                .Sum(t => t.Amount);
+
+            decimal balance = CalculateBalance();
+
+            Console.WriteLine("\n📊 Statistik:");
+            Console.WriteLine("--------------------------------");
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Totala inkomster: {totalIncome} kr");
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Totala utgifter: {totalExpense} kr");
+
+            Console.ResetColor();
+            Console.WriteLine("--------------------------------");
+            Console.Write("Total balans: ");
+            Console.ForegroundColor = balance >= 0 ? ConsoleColor.Green : ConsoleColor.Red;
+            Console.WriteLine($"{balance} kr");
+            Console.ResetColor();
+            Console.WriteLine("--------------------------------");
+
+            Console.WriteLine($"Antal transaktioner: {transactions.Count}");
         }
     }
 }
