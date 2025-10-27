@@ -1,10 +1,6 @@
 ﻿using PersonalBudgetTracker.Models;
 using System.Transactions;
 
-
-namespace personalbudgettracker
-﻿using personalBudgetTracker.Models;
-
 namespace personalbudgettracker.Services
 {
     public class BudgetManager
@@ -89,7 +85,7 @@ namespace personalbudgettracker.Services
 
             decimal balance = CalculateBalance();
 
-            Console.WriteLine("\n📊 Statistik:");
+            Console.WriteLine("Statistik:");
             Console.WriteLine("--------------------------------");
 
             Console.ForegroundColor = ConsoleColor.Green;

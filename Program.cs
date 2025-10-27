@@ -1,6 +1,5 @@
-﻿using PersonalBudgetTracker.Models;
 ﻿using personalbudgettracker.Services;
-using personalBudgetTracker.Models;
+using PersonalBudgetTracker.Models;
 using System.Globalization;
 
 namespace personalbudgettracker
