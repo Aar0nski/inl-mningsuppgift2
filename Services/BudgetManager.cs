@@ -3,6 +3,9 @@ using System.Transactions;
 
 
 namespace personalbudgettracker
+﻿using personalBudgetTracker.Models;
+
+namespace personalbudgettracker.Services
 {
     public class BudgetManager
     {
