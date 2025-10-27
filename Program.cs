@@ -1,5 +1,4 @@
-﻿using personalbudgettracker.Models;
-using personalbudgettracker.Services;
+﻿using PersonalBudgetTracker.Models;
 using System.Globalization;
 
 namespace personalbudgettracker
@@ -39,8 +38,16 @@ namespace personalbudgettracker
                         DeleteTransactionFlow(manager);
                         break;
                     case "5":
+                       manager.ShowStats();
+                        Pause();
+                        break;
+                    case "6":
+                        ShowByCategoryFlow(manager);
+                        break;
+                    case "7":
                         running = false;
                         break;
+
                     default:
                         Console.WriteLine("Ogiltigt val. Försök igen.");
                         Pause();
@@ -53,7 +60,7 @@ namespace personalbudgettracker
 
         static void AddTransactionFlow(BudgetManager manager)
         {
-            Console.WriteLine("\n➕ Lägg till transaktion");
+            Console.WriteLine("Lägg till transaktion");
 
             Console.Write("Beskrivning: ");
             string desc = Console.ReadLine();
@@ -73,7 +80,7 @@ namespace personalbudgettracker
             Console.Write("Datum (YYYY-MM-DD): ");
             string date = Console.ReadLine();
 
-            var t = new Transaction(desc, amount, cat, date); // skapar en ny transaktion med användarens inmatning. Var t är en instans av Transaction-klassen.
+            var t = new BudgetTransaction(desc, amount, cat, date); // skapar en ny transaktion med användarens inmatning. Var t är en instans av Transaction-klassen.
             manager.AddTransaction(t);
 
             Console.WriteLine("Transaktion tillagd!");
@@ -82,14 +89,14 @@ namespace personalbudgettracker
         // En metod för atta visa alla transaktioner.
         static void ShowAllFlow(BudgetManager manager)
         {
-            Console.WriteLine("\n📋 Alla transaktioner:");
+            Console.WriteLine("Alla transaktioner:");
             manager.ShowAll();
             Pause(); // pausar programmet tills användaren trycker på en tangent.
         }
 
         static void ShowBalanceFlow(BudgetManager manager)
         {
-            Console.WriteLine("\n💰 Total balans:");
+            Console.WriteLine("Total balans:");
             decimal balance = manager.CalculateBalance();
             Console.WriteLine($"{balance} kr");
             Pause();
@@ -97,7 +104,7 @@ namespace personalbudgettracker
         // en metod för att ta bort en transaktion.
         static void DeleteTransactionFlow(BudgetManager manager)
         {
-            Console.WriteLine("\n🗑️ Ta bort transaktion");
+            Console.WriteLine("Ta bort transaktion");
             manager.ShowAll();
 
             Console.Write("Ange index att ta bort: ");
@@ -112,8 +119,16 @@ namespace personalbudgettracker
             }
             Pause();
         }
+        static void ShowByCategoryFlow(BudgetManager manager)
+        {
+            Console.WriteLine("Visa transaktioner efter kategori");
+            Console.Write("Ange kategori: ");
+            string category = Console.ReadLine();
+            manager.ShowByCategory(category);
+            Pause();
+        }
 
-        // Em metod för att skriva ut menyn.
+        // En metod för att skriva ut menyn.
 
         static void PrintMenu()
         {
@@ -123,13 +138,15 @@ namespace personalbudgettracker
             Console.WriteLine("2) Visa alla transaktioner");
             Console.WriteLine("3) Visa total balans");
             Console.WriteLine("4) Ta bort transaktion");
-            Console.WriteLine("5) Avsluta");
+            Console.WriteLine("5) Visa statistik");
+            Console.WriteLine("6) Visa transaktioner efter kategori");
+            Console.WriteLine("7) Avsluta");
             Console.WriteLine();
         }
         // En metod för att pausa programmet tills användaren trycker på en tangent.
         static void Pause()
         {
-            Console.WriteLine("\nTryck valfri tangent för att fortsätta...");
+            Console.WriteLine("Tryck valfri tangent för att fortsätta...");
             Console.ReadKey(true);
         }
     }
